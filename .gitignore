@@ -1,0 +1,23 @@
+# Xcode
+.DS_Store
+*/build/*
+*.build
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcworkspace/contents.xcworkspacedata
+*.xcuserstate
+project.xcworkspace
+xcuserdata/
+
+# Swift Package Manager
+.build/
+Packages/
+Package.pins
+Package.resolved
+.swiftpm/xcode
+
+# Temporary files
+*.swp
+*.bak
+*~
