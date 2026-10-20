@@ -33,7 +33,8 @@ public struct SpatialAlertEngine: Sendable {
         let candidates = try await repository.fetchCandidates(in: corridor)
 
         return candidates.compactMap { point in
-            guard bearingFilter.matches(point: point, vehicleBearing: vehicleBearing),
+            guard isAtSameRoadLevel(location: location, point: point),
+                  bearingFilter.matches(point: point, vehicleBearing: vehicleBearing),
                   deduplicator.shouldEmit(point: point, vehicleBearing: vehicleBearing) else {
                 return nil
             }
@@ -54,5 +55,14 @@ public struct SpatialAlertEngine: Sendable {
                 visualBannerText: "\(point.title) \(distanceText)"
             )
         }
+    }
+
+    private func isAtSameRoadLevel(location: Coordinate, point: TrafficPoint) -> Bool {
+        guard let vehicleAltitude = location.altitude,
+              let pointAltitude = point.coordinate.altitude else {
+            return true
+        }
+
+        return abs(vehicleAltitude - pointAltitude) <= 8.0
     }
 }
