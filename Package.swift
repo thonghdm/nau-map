@@ -3,6 +3,18 @@
 
 import PackageDescription
 
+var packageDependencies: [Package.Dependency] = []
+var coreDependencies: [Target.Dependency] = []
+
+#if !os(Windows)
+packageDependencies = [
+    .package(url: "https://github.com/groue/GRDB.swift.git", from: "6.29.0")
+]
+coreDependencies = [
+    .product(name: "GRDB", package: "GRDB.swift")
+]
+#endif
+
 let package = Package(
     name: "NaumapCore",
     platforms: [
@@ -15,16 +27,11 @@ let package = Package(
             targets: ["NaumapCore"]
         )
     ],
-    dependencies: [
-        // SQLite WAL Mode & R*Tree support for spatial alerts
-        .package(url: "https://github.com/groue/GRDB.swift.git", from: "6.29.0")
-    ],
+    dependencies: packageDependencies,
     targets: [
         .target(
             name: "NaumapCore",
-            dependencies: [
-                .product(name: "GRDB", package: "GRDB.swift")
-            ],
+            dependencies: coreDependencies,
             path: "Sources/NaumapCore"
         ),
         .testTarget(

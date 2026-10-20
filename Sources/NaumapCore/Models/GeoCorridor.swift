@@ -64,4 +64,20 @@ public struct GeoCorridor: Hashable, Codable, Sendable {
             maxLongitude: longitudes.max() ?? origin.longitude
         )
     }
+
+    /// Kiểm tra điểm nằm trong hình chữ nhật hành lang, không chỉ trong bounding box bao phủ.
+    public func contains(_ coordinate: Coordinate) -> Bool {
+        guard boundingBox.contains(coordinate) else { return false }
+        let distance = origin.distance(to: coordinate)
+        guard distance <= lookaheadDistanceMeters + corridorWidthMeters else { return false }
+
+        let bearing = origin.bearing(to: coordinate)
+        let difference = abs(headingDegrees - bearing).truncatingRemainder(dividingBy: 360.0)
+        let angularDifference = difference > 180.0 ? 360.0 - difference : difference
+        let lateralDistance = distance * sin(angularDifference * .pi / 180.0)
+        let forwardDistance = distance * cos(angularDifference * .pi / 180.0)
+        return forwardDistance >= -corridorWidthMeters / 2.0 &&
+               forwardDistance <= lookaheadDistanceMeters &&
+               lateralDistance <= corridorWidthMeters / 2.0
+    }
 }

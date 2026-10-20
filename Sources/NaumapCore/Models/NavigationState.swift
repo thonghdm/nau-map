@@ -52,6 +52,7 @@ public enum NavigationEvent: Sendable {
     case alertTriggered(AlertEvent)
     case speedLimitChanged(currentLimitKmh: Int?)
     case offRouteDetected(lastKnownLocation: Coordinate)
+    case needsReroute(lastKnownLocation: Coordinate)
     case tunnelEntered(entrance: TrafficPoint)
     case tunnelExited
 }
